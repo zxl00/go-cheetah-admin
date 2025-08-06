@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ucmp
+  namespace: kube-ops
+  labels:
+    app: ucmp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ucmp
+  template:
+    metadata:
+      labels:
+        app: ucmp
+    spec:
+      imagePullSecrets:
+        - name: docker-reg-secret
+      containers:
+        - name: ucmp
+          image: xxx/devops/ucmp:v2.6
+          ports:
+            - containerPort: 8899
+          resources:
+            requests:
+              memory: "128Mi"
+            limits:
+              memory: "512Mi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8899
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8899
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+          volumeMounts:
+            - name: config
+              mountPath: /app/config.yaml
+              subPath: config.yaml
+      volumes:
+        - name: config
+          configMap:
+            name: ucmp-config-cm
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ucmp-service
+  namespace: kube-ops
+spec:
+  type: NodePort
+  selector:
+    app: ucmp  # 必须与 Deployment 的标签匹配
+  ports:
+    - name: http
+      port: 8899        # Service 监听的端口
+      targetPort: 8899  # 对应容器的端口
+      nodePort: 31080   # 节点暴露的端口 (30000-32767)
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ucmp-config-cm
+  namespace: kube-ops
+data:
+  config.yaml: |
+    server:
+      port: 8899
+      address: 0.0.0.0
+      name: go-easy-admin
+      # # 生产环境建议使用 release，debug：可以使用debug模式
+      model: release
+      adminUser: admin
+      adminPwd: 25285442ebc7d3a0c20047e01d341c31
+
+    # 数据库配置
+    mysql:
+      DbHost: 127.0.0.1
+      DbPort: 3306
+      # 数据库名称 需要提前创建好
+      DbName: go-easy-admin
+      DbUser: root
+      DbPwd: zxl@2025
+      MaxIdleConns: 10
+      MaxOpenConns: 100
+      # 是否开启debug，1 开启 0 关闭
+      ActiveDebug: 0
+
+    # 密码加密
+    aes:
+      key: go-easy-admin
+
+    jwt:
+      realm: go-easy-admin
+      # jwt加密因子
+      key: anruo
+      #  jwt token过期时间 单位为小时
+      timeout: 100
+      # jwt token刷新时间 单位为小时
+      maxRefresh: 1
