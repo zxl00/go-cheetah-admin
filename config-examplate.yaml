@@ -5,7 +5,7 @@ server:
   # # 生产环境建议使用 release，debug：可以使用debug模式
   model: debug
   adminUser: admin
-  adminPwd: 25285442ebc7d3a0c20047e01d341c31
+  adminPwd: 50c0a53b7a562ca8156bf86c20ca4f75
   # 仅支持 mysql、sqlite,默认为sqlite
   dbDriver: mysql
 
