@@ -22,12 +22,17 @@ func (j *JSON) Scan(value interface{}) error {
 		*j = nil
 		return nil
 	}
-	s, ok := value.([]byte)
-	if !ok {
-		return errors.New("invalid Scan Source")
+
+	switch v := value.(type) {
+	case []byte:
+		*j = append((*j)[0:0], v...)
+		return nil
+	case string:
+		*j = append((*j)[0:0], v...)
+		return nil
+	default:
+		return errors.New("invalid Scan Source: expected []byte or string")
 	}
-	*j = append((*j)[0:0], s...)
-	return nil
 }
 
 func (j JSON) Value() (driver.Value, error) {

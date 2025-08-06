@@ -18,5 +18,7 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g" /etc/apk/repositories
     && apk upgrade \
     && apk add --no-cache --virtual .build-deps \
     ca-certificates upx tzdata \
-    && chmod +x /app/main
+    && chmod +x /app/main \
+    && mkdir /app/db \
+    && chmod 777 /app/db
 ENTRYPOINT [ "/app/main" ]

@@ -6,6 +6,8 @@ server:
   model: debug
   adminUser: admin
   adminPwd: 25285442ebc7d3a0c20047e01d341c31
+  # 仅支持 mysql、sqlite,默认为sqlite
+  dbDriver: mysql
 
 # 数据库配置
 mysql:
@@ -19,6 +21,11 @@ mysql:
   MaxOpenConns: 100
   # 是否开启debug，1 开启 0 关闭
   ActiveDebug: 1
+
+sqlite:
+  # 名称不建议修改
+  DbName: go-cheetah-admin.db
+  ActiveDebug: 0
 
 # 密码加密
 aes:

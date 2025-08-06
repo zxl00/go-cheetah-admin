@@ -55,6 +55,6 @@ func init() {
 	global.InitConfig()
 	global.InitSysTips()
 	global.InitLog()
-	global.InitMysql()
+	global.InitDB()
 	global.InitCasbinEnforcer()
 }
